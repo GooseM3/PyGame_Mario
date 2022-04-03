@@ -1,5 +1,6 @@
 import pygame
-
+with open("Score.txt") as f:
+    HS = f.read()
 class Spritesheet(object):
     def __init__(self, filename):
         try:
@@ -68,20 +69,27 @@ class Dashboard(Font):
         self.coins = 0
         self.ticks = 0
         self.time = 0
+        self.timer = 300
 
     def update(self):
         self.drawText("MARIO", 50, 20, 15)
-        self.drawText(self.pointString(), 50, 37, 15)
+        self.drawText("{:0.0f}".format(self.points), 50, 37, 15)
 
         self.drawText("@x{}".format(self.coinString()), 225, 37, 15)
 
-        self.drawText("WORLD", 380, 20, 15)
+        self.drawText("WORLD 1-1", 380, 20, 15)
         self.drawText(str(self.levelName), 395, 37, 15)
 
-        self.drawText("TIME", 520, 20, 15)
-        if self.state != "menu":
-            self.drawText(self.timeString(), 535, 37, 15)
+        self.drawText("TIME:", 520, 20, 15)
 
+        self.drawText("{:0.0f}".format(self.timer), 590, 20, 15)
+        self.timer = self.timer - 0.1
+        self.points = self.points + 0.03
+        self.drawText("HIGH SCORE:", 920, 20, 15)
+        self.drawText("{:0.0f}".format(float(HS)), 920, 40, 15)
+        if self.points > float(HS):
+            with open('Score.txt', 'w') as f:
+                f.write(str(self.points))
         # update Time
         self.ticks += 1
         if self.ticks == 60:
@@ -101,7 +109,7 @@ class Dashboard(Font):
         return "{:02d}".format(self.coins)
 
     def pointString(self):
-        return "{:06d}".format(self.points)
+        return "{:00f}".format(self.points)
 
     def timeString(self):
         return "{:03d}".format(self.time)
